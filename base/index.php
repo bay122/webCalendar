@@ -99,11 +99,11 @@ echo $controls;
 <h1><?php echo(lang_upcoming_events);?></h1>
 <?php
 $get_today = date("Y-m-d",strtotime("2014-2-11")); # This Line Set For Demo, Please Change It to date("Y-m-d");
-$opEvents = mysql_query("SELECT ID,title,note_date FROM ". db_table_pref ."panel_notes WHERE note_date >= '". $get_today ."' ORDER BY note_date ASC LIMIT 0,10") or die(mysql_error());
+$opEvents = mysqli_query($GLOBALS['connection'], "SELECT ID,title,note_date FROM ". db_table_pref ."panel_notes WHERE note_date >= '". $get_today ."' ORDER BY note_date ASC LIMIT 0,10") or die(mysqli_error());
 
-    if(mysql_num_rows($opEvents)==0){echo('<div class="alert alert-info">'. lang_no_record_found .'</div>');}else{
+    if(mysqli_num_rows($opEvents)==0){echo('<div class="alert alert-info">'. lang_no_record_found .'</div>');}else{
 
-        while($opEventsRs = mysql_fetch_assoc($opEvents)){
+        while($opEventsRs = mysqli_fetch_assoc($opEvents)){
             $eventDT2 = strtotime($opEventsRs['note_date']);
             echo('<div class="up-events"><a href="pop_notes.php?pos=2&oy='. date('Y',$eventDT2) .'&om='. date('m',$eventDT2) .'&od='. date('d',$eventDT2) .'&ID='. $opEventsRs['ID'] .'" class="fancybox2" data-fancybox-type="iframe" data-fancybox-title="'. $opEventsRs['title'] .'" data-fancybox-width="600" data-fancybox-height="500"><span>'. date("d.m.Y",$eventDT2) . ' ' . date("H:i",$eventDT2) . '</span> ' . $opEventsRs['title'] .'</a></div>');
         }
