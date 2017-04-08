@@ -245,9 +245,9 @@ define(&#39;admin_ID&#39;,1); # 1 value must be changed with your session variab
 <p>
 	Its can be used any page area with sql filter query like;</p>
 <pre class="prettyprint lang-php linenums">
-$opEvents = mysql_query(&quot;SELECT ID,UID,title,note_date FROM &quot;. db_table_pref .&quot;panel_notes WHERE UID=&quot;. admin_ID .&quot; AND note_date &gt;= &#39;&quot;. date(&quot;Y-m-d&quot;) .&quot;&#39; ORDER BY note_date ASC LIMIT 0,10&quot;) or die(mysql_error());
-if(mysql_num_rows($opEvents)==0){echo(&#39;There is no event listed.&#39;);}else{
-    while($opEventsRs = mysql_fetch_assoc($opEvents)){
+$opEvents = mysqli_query(&quot;SELECT ID,UID,title,note_date FROM &quot;. db_table_pref .&quot;panel_notes WHERE UID=&quot;. admin_ID .&quot; AND note_date &gt;= &#39;&quot;. date(&quot;Y-m-d&quot;) .&quot;&#39; ORDER BY note_date ASC LIMIT 0,10&quot;) or die(mysqli_error());
+if(mysqli_num_rows($opEvents)==0){echo(&#39;There is no event listed.&#39;);}else{
+    while($opEventsRs = mysqli_fetch_assoc($opEvents)){
         echo ($opEventsRs[&#39;title&#39;].&#39;&lt;br&gt;&#39;);
         # Simple Listing Upcoming 10 Event, It can modify with your page system
     }

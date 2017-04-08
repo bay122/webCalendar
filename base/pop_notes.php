@@ -38,24 +38,24 @@ if(isset($_POST['addNote'])){
 	if(empty($_POST['notes'])){$errText .='* '. lang_required_note .'<br />';}
 	$conv_date = $_POST['orgDate'] . ' ' . $_POST['orgHour'] . ':00';
 	$conv_date = date("Y-m-d H:i:s",strtotime($conv_date));
-	if(!validateMysqlDate(mysql_prep($conv_date),"Y-m-d H:i:s")){$errText .='* '. lang_invalid_date .' '. $conv_date .'<br />';}
+	if(!validateMysqlDate(mysqli_prep($conv_date),"Y-m-d H:i:s")){$errText .='* '. lang_invalid_date .' '. $conv_date .'<br />';}
 	
 	if($errText == ''){
 		
-		mysql_query("INSERT INTO ". db_table_pref ."panel_notes (UID,
+		mysqli_query($GLOBALS['connection'], "INSERT INTO ". db_table_pref ."panel_notes (UID,
 														   title,
 														   mynotes,
 														   note_date,
 														   note_icon,
 														   ip_address
 												 ) VALUES (". admin_ID .",
-												 		   '". mysql_prep($_POST['title']) ."',
-														   '". mysql_prep2($_POST['notes']) ."',
-														   '". mysql_prep($conv_date) ."',
+												 		   '". mysqli_prep($_POST['title']) ."',
+														   '". mysqli_prep2($_POST['notes']) ."',
+														   '". mysqli_prep($conv_date) ."',
 														   ". intval($_POST['note_icon']) .",
 														   '". $_SERVER['REMOTE_ADDR'] ."'
-														   )") or die(mysql_error());
-		$errText = '<div class="alert alert-success"><strong>'. mysql_prep($_POST['title']) .'</strong><br />'. lang_success_record .'</div>';
+														   )") or die(mysqli_error());
+		$errText = '<div class="alert alert-success"><strong>'. mysqli_prep($_POST['title']) .'</strong><br />'. lang_success_record .'</div>';
 		$_POST = array();
 		
 		
@@ -81,7 +81,7 @@ if(isset($_POST['editNote'])){
 	
 	if(isset($_POST['sil'])){
 		if($errText==''){
-			mysql_query("DELETE FROM ". db_table_pref ."panel_notes WHERE ID=". $ID ."") or die(mysql_error());
+			mysqli_query($GLOBALS['connection'], "DELETE FROM ". db_table_pref ."panel_notes WHERE ID=". $ID ."") or die(mysqli_error());
 			$pos=0;
 		}
 		}
@@ -93,18 +93,18 @@ if(isset($_POST['editNote'])){
 	if(!isset($_POST['notes']) || empty($_POST['notes'])){$errText .='* '. lang_required_note .'<br />';}
 	$conv_date = $_POST['orgDate'] . ' ' . $_POST['orgHour'] . ':00';
 	$conv_date = date("Y-m-d H:i:s",strtotime($conv_date));
-	if(!validateMysqlDate(mysql_prep($conv_date),"Y-m-d H:i:s")){$errText .='* '. lang_invalid_date .' '. $conv_date .'<br />';}
+	if(!validateMysqlDate(mysqli_prep($conv_date),"Y-m-d H:i:s")){$errText .='* '. lang_invalid_date .' '. $conv_date .'<br />';}
 	
 	if($errText == ''){
 		
-		mysql_query("UPDATE ". db_table_pref ."panel_notes SET title='". mysql_prep($_POST['title']) ."',
-														   mynotes='". mysql_prep2($_POST['notes']) ."',
-														   note_date='". mysql_prep($conv_date) ."',
+		mysqli_query($GLOBALS['connection'], "UPDATE ". db_table_pref ."panel_notes SET title='". mysqli_prep($_POST['title']) ."',
+														   mynotes='". mysqli_prep2($_POST['notes']) ."',
+														   note_date='". mysqli_prep($conv_date) ."',
 														   note_icon=". intval($_POST['note_icon']) ."
 												WHERE
 														   ID=". $ID ."
-												") or die(mysql_error());
-		$errText = '<div class="alert alert-success"><strong>'. mysql_prep($_POST['title']) .'</strong><br />'. lang_success_update .'</div>';
+												") or die(mysqli_error());
+		$errText = '<div class="alert alert-success"><strong>'. mysqli_prep($_POST['title']) .'</strong><br />'. lang_success_update .'</div>';
 		$_POST = array();
 		
 		
@@ -189,13 +189,13 @@ $sortQuery = " ORDER BY note_date DESC";
 $sortList = "";
 
  $limit = 25;
- $count		 = mysql_num_rows(mysql_query("SELECT ID FROM ". db_table_pref ."panel_notes where $addQuery"));
+ $count		 = mysqli_num_rows(mysqli_query($GLOBALS['connection'], "SELECT ID FROM ". db_table_pref ."panel_notes where $addQuery"));
  $toplamsayfa	 = ceil($count / $limit);
  $baslangic	 = ($pgGo-1)*$limit;
 				
 				
-		  $getRs = mysql_query("select ID,UID,title,note_date,note_icon from ". db_table_pref ."panel_notes where $addQuery $sortQuery LIMIT $baslangic,$limit");
-		  while ($rs = mysql_fetch_assoc($getRs)){
+		  $getRs = mysqli_query($GLOBALS['connection'], "select ID,UID,title,note_date,note_icon from ". db_table_pref ."panel_notes where $addQuery $sortQuery LIMIT $baslangic,$limit");
+		  while ($rs = mysqli_fetch_assoc($getRs)){
 ?>
                 <tr>
                   <td height="30" class="org-list-h-cell"><?php echo(date('H:i',strtotime($rs['note_date'])));?></td>
@@ -227,7 +227,7 @@ if(!admin_logged){
                   <tr>
                     <td width="20%" height="25"><strong><?php echo(lang_date);?></strong></td>
                     <td width="2%" height="25"><strong>:</strong></td>
-                    <td width="78%" height="25"><input class="form-control cst-input-normal" name="orgDate" id="orgDate" type="text" value="<?php echo(mysql_prep($_POST['orgDate']));?>" required /><script>$(document).ready(function(){$('#orgDate').datepick({dateFormat: 'dd-mm-yyyy'});});</script></td>
+                    <td width="78%" height="25"><input class="form-control cst-input-normal" name="orgDate" id="orgDate" type="text" value="<?php echo(mysqli_prep($_POST['orgDate']));?>" required /><script>$(document).ready(function(){$('#orgDate').datepick({dateFormat: 'dd-mm-yyyy'});});</script></td>
                   </tr>
                   <tr>
                     <td height="25"><strong><?php echo(lang_hour);?></strong></td>
@@ -246,7 +246,7 @@ for ($halfhour=$start;$halfhour<=$end;$halfhour=$halfhour+30*60) {
                   <tr>
                     <td height="25"><strong><?php echo(lang_title);?></strong></td>
                     <td height="25"><strong>:</strong></td>
-                    <td height="25"><input name="title" class="form-control cst-input-normal" type="text" id="title" value="<?php echo(mysql_prep(@$_POST['title']));?>" size="40"></td>
+                    <td height="25"><input name="title" class="form-control cst-input-normal" type="text" id="title" value="<?php echo(mysqli_prep(@$_POST['title']));?>" size="40"></td>
                   </tr>
                   <tr>
                     <td height="25"><strong><?php echo(lang_icon);?></strong></td>
@@ -282,9 +282,9 @@ for ($halfhour=$start;$halfhour<=$end;$halfhour=$halfhour+30*60) {
                 </table>
               </form>
 <?php }}elseif($pos==2){
-	$getNote = mysql_query("SELECT * FROM ". db_table_pref ."panel_notes WHERE ID=". $ID ."") or die(mysql_error());
-		  if(mysql_num_rows($getNote)==0){echo('<div class="alert alert-danger">'. lang_no_record_found .'</div>');}else{
-		  $rs = mysql_fetch_assoc($getNote);
+	$getNote = mysqli_query($GLOBALS['connection'], "SELECT * FROM ". db_table_pref ."panel_notes WHERE ID=". $ID ."") or die(mysqli_error());
+		  if(mysqli_num_rows($getNote)==0){echo('<div class="alert alert-danger">'. lang_no_record_found .'</div>');}else{
+		  $rs = mysqli_fetch_assoc($getNote);
 	?>
 <table width="100%" border="0" cellspacing="1" cellpadding="1">
                 <tr>
@@ -309,9 +309,9 @@ for ($halfhour=$start;$halfhour<=$end;$halfhour=$halfhour+30*60) {
 <?php }?>
 <?php }elseif($pos==3){
 	
-$getNote = mysql_query("SELECT * FROM ". db_table_pref ."panel_notes WHERE ID=". $ID ."") or die(mysql_error());
-if(mysql_num_rows($getNote)==0){echo('<div class="alert alert-danger">'. lang_no_record_found .'</div>');}else{
-		  $rs = mysql_fetch_assoc($getNote);
+$getNote = mysqli_query($GLOBALS['connection'], "SELECT * FROM ". db_table_pref ."panel_notes WHERE ID=". $ID ."") or die(mysqli_error());
+if(mysqli_num_rows($getNote)==0){echo('<div class="alert alert-danger">'. lang_no_record_found .'</div>');}else{
+		  $rs = mysqli_fetch_assoc($getNote);
 
 if(!admin_logged){
 	$errText = '<div class="alert alert-danger">'. lang_user_auth_err .'</div>';
@@ -324,7 +324,7 @@ if(!admin_logged){
                   <tr>
                     <td width="20%" height="25"><strong><?php echo(lang_date);?></strong></td>
                     <td width="2%" height="25"><strong>:</strong></td>
-                    <td width="78%" height="25"><input class="form-control cst-input-normal" name="orgDate" id="orgDate" type="text" value="<?php echo(mysql_prep(date("d-m-Y",strtotime($rs['note_date']))));?>" required /><script>$(document).ready(function(){$('#orgDate').datepick({dateFormat: 'dd-mm-yyyy'});});</script></td>
+                    <td width="78%" height="25"><input class="form-control cst-input-normal" name="orgDate" id="orgDate" type="text" value="<?php echo(mysqli_prep(date("d-m-Y",strtotime($rs['note_date']))));?>" required /><script>$(document).ready(function(){$('#orgDate').datepick({dateFormat: 'dd-mm-yyyy'});});</script></td>
                   </tr>
                   <tr>
                     <td height="25"><strong><?php echo(lang_hour);?></strong></td>
@@ -343,7 +343,7 @@ for ($halfhour=$start;$halfhour<=$end;$halfhour=$halfhour+30*60) {
                   <tr>
                     <td height="25"><strong><?php echo(lang_title);?></strong></td>
                     <td height="25"><strong>:</strong></td>
-                    <td height="25"><input name="title" type="text" class="form-control cst-input-normal" id="title" value="<?php echo(mysql_prep($rs['title']));?>" size="40"></td>
+                    <td height="25"><input name="title" type="text" class="form-control cst-input-normal" id="title" value="<?php echo(mysqli_prep($rs['title']));?>" size="40"></td>
                   </tr>
                   <tr>
                     <td height="25"><strong><?php echo(lang_icon);?></strong></td>
